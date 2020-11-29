@@ -1,5 +1,7 @@
 ﻿using EmployeeInformation.BL;
 using EmployeeInformation.DL;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,25 +11,25 @@ using System.Web.Http;
 
 namespace EmployeeInformation.WebAPI.Controllers
 {
-    public class EmployeeInformation : ApiController
+    public class EmployeeInformationController : ApiController
     {
         IEmployeeDetails employeeDetails;
 
-        public EmployeeInformation()
+        public EmployeeInformationController()
         {
             employeeDetails = new EmployeeDetails();
         }
         // GET api/<controller>
 
-        public IEnumerable<Employee> GetAllEmployees()
+        public List<Employee> GetAllEmployees()
         {
-            return employeeDetails.getEmployees();
+             return employeeDetails.getEmployees();
         }
 
         // GET api/<controller>/5
-        public Employee GetEmployeeByID(string id)
+        public Employee GetEmployeeByID(int id)
         {
-            return employeeDetails.getEmployeeByID(Convert.ToInt32(id));
+            return employeeDetails.getEmployeeByID(id);
         }
 
         // POST api/<controller>

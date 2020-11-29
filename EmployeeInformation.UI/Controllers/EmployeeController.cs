@@ -1,46 +1,69 @@
 ﻿using EmployeeInformation.UI.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Xml.Serialization;
 
 namespace EmployeeInformation.UI.Controllers
 {
     public class EmployeeController : Controller
     {
-        // GET: Employee
-        public ActionResult Index( int ID)
+
+        public ActionResult Index()
         {
-            IEnumerable<EmployeeViewModel> employees = null;
+            IList<EmployeeViewModel> employees = new List<EmployeeViewModel>();
+            return View(employees);
+        }
+        // GET: Employee
+        public ActionResult getEmployee()
+        {
+            List<EmployeeViewModel> employees = null;
 
             using (var client = new HttpClient())
             {
-                client.BaseAddress = new Uri("http://localhost:64189/api/");
-                //HTTP GET
-                var responseTask = client.GetAsync("EmployeeInformation" + (ID == 0 ? "" : "/" + ID.ToString()));
+                string ID = Request.Form["search"].ToString();
+                  //HTTP GET
+                int intType;
+                if (ID != string.Empty )
+                    if(int.TryParse(ID, out intType) == false)
+                        return View("Index", new List<EmployeeViewModel>());
+                
+                    client.BaseAddress = new Uri("https://localhost:44378/api/");
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-                responseTask.Wait();
+                    var responseTask = client.GetAsync("EmployeeInformation" + (ID == string.Empty ? "/GetAllEmployees" : "/GetEmployeeByID/" + Convert.ToInt32(ID)));
 
-                var result = responseTask.Result;
-                if (result.IsSuccessStatusCode)
-                {
-                    var readTask = result.Content.ReadAsAsync<IList<EmployeeViewModel>>();
-                    readTask.Wait();
+                    responseTask.Wait();
 
-                    employees = readTask.Result;
-                }
-                else //web api sent error response 
-                {
-                    //log response status here..
+                    var result = responseTask.Result;
 
-                    employees = Enumerable.Empty<EmployeeViewModel>();
+                    if (result.IsSuccessStatusCode)
+                    {
+                        if (ID == string.Empty)
+                        {
+                            employees = result.Content.ReadAsAsync<List<EmployeeViewModel>>().Result;
+                        }
+                        else
+                        {
+                            EmployeeViewModel employee = result.Content.ReadAsAsync<EmployeeViewModel>().Result;
+                            employees = new List<EmployeeViewModel>();
+                            employees.Add(employee);
 
-                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                }
+                        }
+                    }
+                    return View("Index", employees);
+                
+
+                
             }
-            return View(employees);
+           
+
         }
 
        

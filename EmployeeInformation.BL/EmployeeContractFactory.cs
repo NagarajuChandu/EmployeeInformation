@@ -7,15 +7,15 @@ namespace EmployeeInformation.BL
 {
     public class EmployeeContractFactory
     {
-        public Employee getEmployeeByContractType(ContractyTypeEnum employeeContract)
+        public Employee getEmployeeByContractType(Employee employee)
         {
-            if(employeeContract == ContractyTypeEnum.Hourly)
+            if(employee.ContractType == ContractyTypeEnum.Hourly)
             {
-                return new HourlyContract();
+                return new HourlyContract(employee.ID, employee.FirstName, employee.LastName, employee.DOB, employee.Salary);
             }
-            else if(employeeContract == ContractyTypeEnum.Monthly)
+            else if(employee.ContractType == ContractyTypeEnum.Monthly)
             {
-                return new MonthlyContract();
+                return new MonthlyContract(employee.ID, employee.FirstName, employee.LastName, employee.DOB, employee.Salary);
             }
             else
                 return null;

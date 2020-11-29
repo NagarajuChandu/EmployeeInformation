@@ -13,9 +13,10 @@ namespace EmployeeInformation.BL
         {
             employeeRepository = new EmployeeRepository();
             Employee employee = employeeRepository.getEmployeeByID(employeeID);
-
+            if (employee == null)
+                return null;
             EmployeeContractFactory employeeContractFactory = new EmployeeContractFactory();
-            employee.Salary = (employeeContractFactory.getEmployeeByContractType(employee.ContractType)).getCalculatedAnnualSalary();
+            employee.Salary = (employeeContractFactory.getEmployeeByContractType(employee)).getCalculatedAnnualSalary();
 
             return employee;
         }
@@ -28,7 +29,7 @@ namespace EmployeeInformation.BL
             foreach (Employee employee in employees)
             {
                 
-                employee.Salary = (employeeContractFactory.getEmployeeByContractType(employee.ContractType)).getCalculatedAnnualSalary();
+                employee.Salary = (employeeContractFactory.getEmployeeByContractType(employee)).getCalculatedAnnualSalary();
 
             }
 
